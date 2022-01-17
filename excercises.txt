@@ -1,0 +1,179 @@
+#include<iostream>
+#include<fstream>
+using namespace std;
+
+
+struct node
+{
+	int val;
+	node *next;
+};
+
+void insert(node *&H, int x);
+void remove(node *&H);
+void show(node *H);
+int* ReadDataFromFile(int &size);
+void Sort(node *&head);
+void Merge(node *&head, node *&h);
+
+int main()
+{
+	node *H = NULL;
+	int size = 0;
+	int *t = ReadDataFromFile(size);
+
+	node **DB = new node *[50];
+	for (int i = 0; i < 50; i++)
+	{
+		DB[i] = new node[10];
+	}
+
+	for (int i = 0; i < 50; i++)
+	{
+		for (int j = 0; j < 10; j++)
+		{
+
+			insert(*&DB[i], t[i+j]);
+		}
+
+	}
+
+	for (int i = 0; i < 50; i++)
+	{
+		Sort(*&DB[i]);
+	}
+	for (int i = 0; i < 50; i++)
+	{
+		Merge(*&H, &DB[i])
+	}
+
+	system("PAUSE");
+	return 0;
+}
+
+int* ReadDataFromFile(int &size)
+{
+	fstream czytaj;
+
+	czytaj.open("liczby.txt");
+	czytaj >> size;
+	cout << size;
+	int*Data = new int[size];
+	for (int i = 0; i<size; i++)
+		czytaj >> Data[i];
+	czytaj.close();
+	return Data;
+}
+
+
+void insert(node *&H, int x)
+{
+	node *pom;
+	pom = new node;
+	pom->val = x;
+	pom->next = H;
+	H = pom;
+}
+
+void remove(node *&H)
+{
+	if (H != NULL)
+	{
+		node *pom = H;
+		H = pom->next;
+		delete pom;
+	}
+}
+
+void show(node *H)
+{
+	node *pom = H;
+	cout << "HEAD ->";
+	while (pom != NULL)
+	{
+		cout << pom->val << "->";
+		pom = pom->next;
+	}
+	cout << "NULL" << endl;
+}
+
+
+void Sort(node *&head)
+{
+	node *p, *q, *z, *r;
+	int ilosc = 0;
+	p = head;
+	q = head->next;
+	z = NULL;
+	r = NULL;
+
+	while (p->next)
+	{
+		ilosc++;
+	}
+
+	for (int i = 0; i < ilosc; i++)
+	{
+		p = head;
+		q = head->next;
+		z = NULL;
+		r = NULL;
+
+		while (p->next && q->next)
+		{
+			z = p;
+			if (p->val > q->val)
+			{
+				if (p == head)
+				{
+					p->next = q->next;
+					q->next = p;
+					head = q;
+					q = p->next;
+				}
+				else
+				{
+					r = p;
+					z->next = q;
+					p->next = q->next;
+					q = p;
+
+					z->next = p;
+					q = p->next;
+				}
+			}
+			p = p->next;
+			q = q->next;
+		}
+	}
+	
+}
+
+
+void Merge(node *&head, node *&h)
+{
+	node *p, *q;
+	p = head;
+	q = h;
+
+	while (p->next)
+	{
+		while (q->next)
+		{
+			if (q->val < p->val)
+			{
+				node *z = new node;
+				z->val = q->val;
+
+				z->next = p->next;
+				p->next = z;
+
+				q = q->next;
+			}
+		}
+
+		p = p->next;
+
+	}
+
+}

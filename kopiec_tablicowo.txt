@@ -1,0 +1,83 @@
+#include <iostream>
+using namespace std;
+//////////////////////////////////
+////// KOPIEC TABLICOWO//////////
+//////////////////////////////////
+string cr,cl,cp;
+
+int tab[15];
+int n=0;
+
+void print(string sp, string sn, int v)
+{
+  string s;
+
+  if(v<n)
+  {
+    s = sp;
+    if(sn == cr) s[s.length() - 2] = ' ';
+    print(s + cp, cr, 2*v+2);
+
+    s = s.substr(0,sp.length()-2);
+
+    cout << s << sn << tab[v] << endl;
+
+    s = sp;
+    if(sn == cl) s[s.length() - 2] = ' ';
+    print(s + cp, cl, 2*v+1);
+  }
+}
+void push(int v)
+{
+   int i,j;
+   i=n++;
+   j=(i-1)/2; ///ojciec
+   while(i>0 && tab[j]<v)
+   {
+       tab[i]=tab[j];
+       i=j;
+       j=(i-1)/2;
+   }
+   tab[i]=v;
+}
+void pop() ///usuwamy roota
+{
+    int i, j,v;
+    if(n--)
+    {
+        v=tab[n];
+        i=0;
+        j=1;
+        while(j<n)
+        {
+            if (j+1<n && tab[j+1]>tab[j])
+            {
+                j++;
+            }
+            if(v>= tab[j])
+            {
+                break;
+            }
+            tab[i]=tab[j];
+            i=j;
+            j=(2*j+1);
+        }
+        tab[i]=v;
+    }
+}
+
+int main()
+{
+    cr = cl = cp = "  ";
+    cr[0] = 218; cr[1] = 196;
+    cl[0] = 192; cl[1] = 196;
+    cp[0] = 179;
+    push(5);
+    push(7);
+    push(3);
+    push(8);
+    push(2);
+    print("","", 0);
+    pop();
+    print("", "",0);
+}

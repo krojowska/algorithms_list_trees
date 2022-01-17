@@ -1,0 +1,566 @@
+";/#include <iostream>
+using namespace std;
+//////////////////////////////////
+//////// LISTY Lab////////////
+//////////////////////////////////
+struct node
+{
+  int data;
+  node *next;
+};
+void add_back (node *&head, int v)
+{
+    node *p=head;
+    node *e=new node;
+    e->data=v;
+    e->next=NULL;
+    if(p)
+    {
+        while(p->next)    p=p->next;
+        p->next=e;
+    }
+    else head=e;
+}
+void show(node *head)
+{
+    node *p=head;
+    while(p)
+    {
+        cout<<p->data<<" ";
+        p=p->next;
+    }
+}
+void remove_all(node*&head)
+{
+    node*p=head;
+    while(p)
+    {
+        p=p->next;
+        delete head;
+        head=p;
+    }
+}
+void remove_one(node*&head, int v)
+{
+    node*p=head;
+    if(p->data ==v) ///usuwanie glowy
+    {
+        p=p->next;
+        delete head;
+        head=p;
+    }
+
+    else
+    {
+        p=head;
+        while(p->next->data != v)
+        {
+            p=p->next;
+        }
+        if(p->next->data !=v)
+        {
+            cout<<endl<<"nie ma takiego elementu ma liscie"<<endl;
+        }
+        node*e=p->next;
+        p->next=e->next;
+        delete e;
+    }
+}
+void funkcja4 (node *&head) ///Napisz funkcjê, która powoduje przeniesienie ostatniego elementu listy na pierwsze miejsce (przed „g³owê”)
+{
+    node *p=head;
+    while(p->next->next)    p=p->next;
+
+    node *e=p->next;
+    p->next=NULL;
+    e->next=head;
+    head=e;
+}
+void funkcja5(node *&head) ///Napisz funkcjê zamieniaj¹c¹ element ostatni z pierwszym
+{
+    node *p=head;
+    while(p->next->next)    p=p->next;
+    node *e=p->next;
+    e->next=head;
+    p->next=NULL;
+    head=e;
+
+    node *q=e->next;
+    e->next=q->next;
+    p->next=q;
+    q->next=NULL;
+}
+void funkcja6 (node *&head, int k) ///Napisz funkcje, która zamienia element o podanym kluczu ze swoim nastêpnikiem
+{
+    if(head->data==k)
+    {
+        node *z=head->next;
+        head->next=z->next;
+        z->next=head;
+        head=z;
+    }
+   else
+   {
+    node *p=head;
+    while(p->next->data!=k)   p=p->next;
+    if (p->next->next==NULL) cout<<"Element nie ma nastepnika."<<endl;
+    else
+    {
+        node*q=p->next;
+        node*r=q->next;
+        q->next=r->next;
+        r->next=q;
+        p->next=r;
+    }
+   }
+}
+void funkcja7 (node *&head, int k) ///Napisz funkcje, która zamienia element o podanym kluczu ze swoim poprzednikiem
+{
+    if(head->data==k)
+    {
+        cout<<"Element nie ma poprzednika."<<endl;
+    }
+    else if(head->next->data==k)
+    {
+       node *p=head->next;
+       head->next=p->next;
+       p->next=head;
+       head=p;
+    }
+   else
+   {
+    node *p=head;
+    while(p->next->next->data!=k)   p=p->next;
+    node*q=p->next;
+    node*r=q->next;
+    q->next=r->next;
+    r->next=q;
+    p->next=r;
+   }
+}
+void swap (node *&head, node *p) ///elementy obok siebie
+{
+    node *q,*r;
+    if(p==NULL)
+    {
+        q=head;
+        r=head->next;
+        q->next=r->next;
+        r->next=q;
+        head=r;
+    }
+    else
+    {
+        q=p->next;
+        r=p->next->next;
+        q->next=r->next;
+        r->next=q;
+        p->next=r;
+    }
+}
+int calc(node *head)
+{
+    int ile=0;
+    node*p=head;
+    while(p)
+    {
+        ile++;
+        p=p->next;
+    }
+    return ile;
+}
+void pop_last(node*&head)
+{
+        node *r=head;
+	    while(r->next->next)  r=r->next;
+	    node *n=r->next;
+	    r->next=NULL;
+	    delete n;
+}
+void funkcja8(node* &head) ///Napisz funkcjê kasuj¹c¹ co 2 element listy
+{
+	 int licznik=0;
+	 node *p, *q;
+     p=head;
+	 while(p)
+	 {
+	     licznik++;
+	     p=p->next;
+	 }
+	 p=head;
+	 if(licznik%2==1)
+	 {
+	     while(p->next!=NULL)
+	     {
+            q=p->next;
+            p->next=q->next;
+            q->next=NULL;
+            delete q;
+            p=p->next;
+	     }
+	 }
+	 else if (licznik%2==0)
+	 {
+	    while(p->next->next!=NULL)
+	    {
+            q=p->next;
+            p->next=q->next;
+            q->next=NULL;
+            delete q;
+            p=p->next;
+	    }
+	    pop_last(head);
+	 }
+}
+void funkcja9 (node *&head, int n, int x) ///Napisz funkcje kasuj¹ca n elementów za podanym x
+{
+    int licznik=calc(head);
+    node *p=head;
+    int a=0;
+    int b=0;
+    while(p->data != x && p->next!=NULL)
+    {
+        p=p->next;
+        a++;
+    }
+    if (p->data!=x) cout<<endl<<"nie ma elementu o wartosci "<<x<<endl;
+    b=licznik-a-1; //ilosc ele mozliwa do usuniecia
+    node *r=p->next;
+    if(n<b) //jesli nie usuwamy ostatniego ele
+    {
+        for(int i=0; i<n; i++)
+        {
+            p->next=r->next;
+            r->next=NULL;
+            delete r;
+            r=p->next;
+        }
+    }
+    else if (n==b) //usuwanie ostatniego ele
+    {
+        for(int i=0; i<n; i++)
+        {
+            pop_last(head);
+        }
+    }
+    else cout<<endl<<"wychodzimy poza liste"<<endl;
+
+}
+void funkcja10 (node *&head) ///Napisz funkcje sortuj¹c¹ b¹belkowo listê
+{
+    int suma=calc(head);
+    for (int i=0; i<suma; i++)
+    {
+        node*p=NULL;
+        node*q=head;
+        if(q->data > q->next->data)
+        {
+            swap(head,p);
+        }
+        p=head;
+        q=q->next;
+        while(q->next)
+        {
+            if(q->data > q->next->data)
+            {
+                swap(head,p);
+            }
+            p=p->next;
+            q=p->next;
+        }
+    }
+}
+void funkcja11 (node *&head) ///Napisz funkcjê odwracaj¹ca listê
+{
+    node*curr, *prev, *next;
+    curr=prev=next=NULL;
+    curr=head;
+    while(curr)
+    {
+        next=curr->next;
+        curr->next=prev;
+        prev=curr;
+        curr=next;
+    }
+    head=prev;
+}
+void funkcja12 (node *&head) ///Napisz funkcjê kopiuj¹ca za siebie listê 1 razy
+{
+    node*p=head;
+    int ile=calc(head);
+    for (int i=0; i<ile; i++)
+    {
+        add_back(head, (p->data));
+        p=p->next;
+    }
+}
+void add_after(node*e, int v)
+{
+    node*p=new node;
+    p->next=e->next;
+    p->data=v;
+    e->next=p;
+}
+void funkcja13(node *&head) ///Dana jest lista jednostronnie wi¹zana. Napisz funkcje kopiuj¹c¹ które kopuje element (p->data-1) razy za p
+{
+    node*p=head;
+    while(p->next)
+    {
+        for(int i=0; i<((p->data)-1); i++)
+        {
+            add_after(p, (p->data));
+        }
+        if(p->data >1)
+        {
+            for(int i=0; i<(p->data); i++)
+            {
+                p=p->next;
+            }
+        }
+        else p=p->next;
+    }
+}
+void funkcja14 (node*&head, int v) ///Napisz funkcjê która powoduje wstawianie do listy elementów tak aby ele by³y posortowane malej¹co.
+{
+    node*e=new node;
+    e->data=v;
+    node*p=head;
+
+    if(p==NULL) ///jesli nie ma ele
+    {
+        head=e;
+    }
+    else if(p)
+    {
+        p=head;
+        if(p->data >= e->data) ///przed glowe
+            {
+                e->next=p;
+                head=e;
+            }
+        else
+        {
+           p=head;
+            node*r;
+            r=p;
+            while(p->data <= e->data && p->next)
+            {
+                r=p;
+                p=p->next;
+            }
+
+            if(p->data <= e->data) ///za ostatni ele
+            {
+                p->next=e;
+                e->next=NULL;
+            }
+            else
+            {
+                e->next=r->next; ///za r ale przed p (pomiedzy)
+                r->next=e;
+            }
+        }
+    }
+}
+void funkcja15 (node*&h1, node*&h, int k) ///Napisz funkcjê, która zabiera element z listy o podanym kluczu i wstawia go do innej listy
+///z h1 usuwam do h wstawiam
+{
+    add_back(h, k);
+    remove_one(h1, k);
+}
+void funkcja16 (node *&head) ///Napisz funkcjê, która usuwa z listy elementy parzyste (co do wartoœci)
+{
+    node *p=head;
+    while(p)
+    {
+        if((p->data)%2==0)
+        {
+            remove_one(head,(p->data));
+            p=p->next;
+        }
+        else p=p->next;
+    }
+}
+/*void swap2 (node *&head,node*&prev1, node*&prev2) ///swap elementow NIE obok siebie
+//liczby sie kolejnosc prev 1 przed prev2
+{
+    node*zamien1, *zamien2, *polacz1, *polacz2;
+    if(prev1==NULL)
+    {
+        zamien1=head;
+        polacz1=zamien1->next;
+        if(prev2->next->next==NULL)
+        {
+            prev2->next=zamien1;
+            zamien2->next=polacz1;
+            zamien1->next=NULL;
+            head=zamien2;
+        }
+        else
+        {
+            zamien2=prev2->next;
+            polacz2=zamien2->next;
+            prev2->next=zamien1;
+            zamien2->next=polacz1;
+            zamien1->next=polacz2;
+            head=zamien2;
+        }
+
+    }
+    else if(prev2->next->next==NULL)
+    {
+        zamien1=prev1->next;
+        polacz1=zamien1->next;
+        zamien2=prev2->next;
+
+        prev2->next=zamien2;
+        prev1->next=zamien2;
+        zamien2->next=polacz1;
+        zamien1->next=NULL;
+    }
+    else
+    {
+        zamien1=prev1->next;
+        polacz1=prev1->next->next;
+        zamien2=prev2->next;
+        polacz2=prev2->next->next;
+
+        prev2->next=zamien1;
+        zamien1->next=polacz2;
+        prev1->next=zamien2;
+        zamien2->next=polacz1;
+    }
+}
+void funkcja17(node *&head) ///TODO:Napisz funkcjê, która zamieni miejscami element maksymalny z elementem minimalnym na liœcie
+{
+    node *p=head;
+    int min, max;
+    min=max=p->data;
+    p=p->next;
+    while(p->next)
+    {
+        if(p->data <min)
+        {
+            min=p->data;
+        }
+        p=p->next;
+    }
+    p=head;
+    while(p->next)
+    {
+        if(p->data >max)
+        {
+            max=p->data;
+        }
+        p=p->next;
+    }
+    p=head;
+    while(p->next->data!=min && p->next->next)
+    {
+        p=p->next;
+    }
+    node*prevMin=p;
+    head=p;
+    while(p->next->data!=max && p->next->next)
+    {
+        p=p->next;
+    }
+    node*prevMax=p;
+    p=head;
+    ///TODO: swap2 elementow nie obok siebie
+}*/
+void funkcja18(node*&head) ///Napisz funkcjê, która elementy parzyste (miejsca) przeniesie na koniec listy
+{
+    int ilosc=calc(head);
+    node*p=head;
+    node*r;
+    int temp;
+        for (int i=0; i<(ilosc/2); i++)
+        {
+            r=p->next;
+            temp=r->data;
+            p->next=r->next;
+            r->next=NULL;
+            delete r;
+            p=p->next;
+            add_back(head, r->data);
+        }
+}
+int main()
+{
+    node *h=NULL;
+    add_back(h, 1);
+    add_back(h, 2);
+    add_back(h, 3);
+    add_back(h, 4);
+    add_back(h, 5);
+    show(h);
+    cout<<endl<<"Funkcja 4 (ostatni ele na pocz): ";
+    funkcja4(h);
+    show(h);
+    cout<<endl<<"Funkcja 5 (zamiana ostatniego z pierwszym): ";
+    funkcja5(h);
+    show(h);
+    cout<<endl<<"Funkcja 6 (zamiana ele o kluczu k z nastepnikiem): ";
+    funkcja6(h,1);
+    show(h);
+    cout<<endl<<"Funkcja 7 (zamiana ele o kluczu k z poprzednikiem): ";
+    funkcja7(h,3);
+    show(h);
+    cout<<endl<<"Funkcja 8 (usuwanie co drugiego ele): ";
+    funkcja8(h);
+    show(h);
+    add_back(h, 2);
+    add_back(h, 1);
+    add_back (h,7);
+    cout<<endl<<"Funkcja 9 (kasowanie n elementow za podanym x): "<<endl; ///(h,n,x)
+    cout<<"lista przed: ";
+    show(h);
+    funkcja9(h,2,3);
+    cout<<endl<<"lista po: ";
+    show(h);
+    cout<<endl<<"Funkcja 10 (sortuj babelkowo): ";
+    funkcja10(h);
+    show(h);
+    cout<<endl<<"Funkcja 11 (odwroc liste): ";
+    funkcja11(h);
+    show(h);
+    cout<<endl<<"Funkcja 12 (skopiuj liste na koniec listy): ";
+    funkcja12(h);
+    show(h);
+    cout<<endl<<"Funkcja 13 (skopiuj elementy p->data razy): "<<endl;
+    funkcja13(h);
+    show(h);
+    cout<<endl<<"Funkcja 14 (wstawianie malejaco) [lista h do h1]: "<<endl;
+    node*h1=NULL;
+    int ilosc=calc(h);
+    for (int i=0; i<ilosc; i++)
+    {
+        funkcja14(h1,(h->data));
+        h=h->next;
+    }
+    show(h1);
+    remove_all(h); ///lista h jest pusta
+    cout<<endl<<"Funkcja 15 (zabiera ele o kluczu k z h1 i wstawia do h): "; ///z h1 element znika i znajduje sie w h
+    funkcja15(h1,h,3);
+    cout<<endl<<"h1 (element znika): ";
+    show(h1);
+    cout<<endl<<"h (element jest wstawiony): ";
+    show(h);
+    cout<<endl<<"Funkcja 16 (usuwanie parzystych elementow co do wartosci): ";
+    cout<<endl<<"Lista h przed usunieciem: ";
+    add_back(h, 7);
+    add_back(h, 2);
+    add_back(h, 1);
+    add_back(h, 4);
+    add_back(h, 6);
+    add_back(h, 9);
+    add_back(h, 5);
+    show(h);
+    funkcja16(h);
+    cout<<endl<<"Lista h po usunieciu ele parzystych: ";
+    show(h);
+    cout<<endl<<"Fukcja 18 (elementy parzyste na koniec listy: ";
+    funkcja18(h);
+    show(h);
+}

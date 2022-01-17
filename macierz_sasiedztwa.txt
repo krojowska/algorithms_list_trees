@@ -1,0 +1,88 @@
+#include <iostream>
+#include <iomanip>
+using namespace std;
+////////////////////////////////
+/// MACIERZ SASIEDZTWA /////////
+///////////////////////////////
+struct node
+{
+  int data;
+  node*next;  
+};
+int n;
+char**tab;
+bool*visited;
+
+void BFS(int v)
+{
+    node *q,*head,*tail;
+    
+    q=new node;
+    q->data=v;
+    q->next=NULL;
+    head=tail=q;
+    
+    visited[v]=true;
+    
+    while(head)
+    {
+        v=head->data;
+        q=head;
+        head=head->next;
+        if(!head) tail=NULL;
+        delete q;
+        
+        cout<<v;
+        
+        for(i=0; i<n; i++)
+        {
+            if(tab[v][i]==1 && !visited[i])
+            {
+                q=new node;
+                q->data=i;
+                q->next=NULL;
+                if(!tail) head=q;
+                else tail->next=q;
+                tail=q;
+                visited[i]=true;
+            }
+        }
+    }
+    
+}
+void DFS(int v)
+{
+    int i;
+    visited[v]=true;
+    cout<<v;
+    for(i=0; i<n; i++)
+    {
+        if(tab[v][i]=1 && !visited[i]) DFS(i);
+    }
+}
+int main()
+{
+    int m,i,j,v1,v2;
+  
+  cin >> n >> m;         // Czytamy liczbê wierzcho³ków i krawêdzi
+
+  A = new char * [n];    // Tworzymy tablicê wskaŸników
+
+  for(i = 0; i < n; i++)
+    A[i] = new char [n]; // Tworzymy wiersze
+
+  // Macierz wype³niamy zerami
+
+  for(i = 0; i < n; i++)
+    for(j = 0; j < n; j++) A[i][j] = 0;
+
+  // Odczytujemy kolejne definicje krawêdzi
+
+  for(i = 0; i < m; i++)
+  {
+    cin >> v1 >> v2;    // Wierzcho³ek startowy i koñcowy krawêdzi
+    A[v1][v2] = 1;      // KrawêdŸ v1->v2 obecna
+  }
+
+  cout << endl;
+}

@@ -1,0 +1,76 @@
+#include <iostream>
+using namespace std;
+/////////////////////////////////////
+/// KOLEJKA TABLICOWO //////////////
+///////////////////////////////////////////////////////////////////////
+//// !!!mog¹ byc wolne przestrzenie w tablicy gdzie jest kolejka!!!///////
+/////////////////////////////////////////////////////////////////////
+struct queue
+{
+    int count; ///liczba elementow kolejki
+    int qptr; ///wskaznik na poczatek
+    int *tab; ///tablica;
+    int n; ///rozmiar tablicy
+    queue(int x); ///konstruktor
+    ~queue(); ///destruktor
+    bool empty(void);
+    void push(int v);
+    void pop(void);
+    int front(void);
+};
+queue::queue(int x)
+{
+    n=x;
+    tab=new int [x];
+    qptr=count=0;
+}
+queue::~queue()
+{
+    delete [] tab;
+}
+bool queue::empty()
+{
+    if(!count) return true;
+    else return false;
+}
+int queue::front()
+{
+    if(count)
+    return tab[qptr];
+}
+void queue::push(int v)
+{
+    int i;
+    if(count<n) ///jesli ilosc elementow kolejki mniejsza od rozmiaru tablicy
+    {
+        i=qptr+count++;
+        if(i>=n)
+        {
+            i-=n;
+        }
+        tab[i]=v;
+    }
+}
+void queue::pop()
+{
+    if(!empty())
+    {
+        qptr++;
+        count--;
+        if(qptr==n) qptr=0;
+    }
+}
+int main()
+{
+    queue kolejka(10);
+    int i;
+    for (i=1; i<=10; i++)
+    {
+        kolejka.push(i);
+    }
+    while(!kolejka.empty())
+    {
+        cout<<kolejka.front()<<endl;
+        kolejka.pop();
+    }
+}

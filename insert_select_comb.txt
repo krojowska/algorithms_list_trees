@@ -1,0 +1,163 @@
+void insertsort(node*&head)
+{
+        node *w=new node;
+        w->data=-1000;
+        w->next=head;
+        head=w;
+
+        node*tail=head;
+        while(tail->next)
+        {
+            tail=tail->next;
+        }
+    if(head->next)
+    {
+        while(w->next!=tail)
+        {
+            node*k=tail;
+            node*p=head->next;
+            while(p->next!=k)
+            {
+                p=p->next;
+            }
+            tail=p;
+            w=head;
+            while(w!=p)
+            {
+                if(w->next->data > k->data)
+                {
+                    if(w->next==tail) tail=k;
+                    p->next=k->next;
+                    k->next=w->next;
+                    w->next=k;
+                    break;
+                }
+                w=w->next;
+            }
+            w=head;
+        }
+        head=head->next;
+    }
+}
+void selectionsort(node *&head)
+{
+    int size=calc(head);
+    node*w=new node;
+    w->data=-1000;
+    w->next=head;
+    head=w;
+    if(head->next->next)
+    {
+        for(int i=0; i<size-1; i++)
+        {
+            node*p=w->next;
+            node*m=w->next;
+            while(p)
+            {
+                if(p->data < m->data)
+                {
+                    m=p;
+                }
+                p=p->next;
+            }
+            p=w->next;
+            if(w->next==m)
+            {
+                w=w->next;
+                continue;
+            }
+            while(p->next!=m)
+            p=p->next;
+            p->next=m->next;
+            m->next=w->next;
+            w->next=m;
+            w=w->next;
+        }
+    }
+    head=head->next;
+}
+void swapgap(node*&H, node* p ,node *r)
+{	
+		
+	    node *last = H;
+    while (last) last = last->next;
+    if (r == NULL) return;
+    if ((p == NULL && r == H) || (p == H && p->next == p))
+    {
+        swap(H, p);
+        return;
+    }
+    node *m, *n;
+    if (p == NULL)
+    {
+        m = H;
+        node *m1 = H->next;
+        n = r->next;
+        node *n1 = r->next->next;
+        H = n;
+        n->next = m1;
+        r->next = m;
+        m->next = n1;
+    }
+    else
+    {
+        m = p->next;
+        n = r->next;
+        node *m1 = p->next->next;
+        node *n1 = r->next->next;
+        p->next = n;
+        n->next = m1;
+        r->next = m;
+        m->next = n1;
+    }
+    if (n == last)
+    {
+        last = m;
+    }
+}
+
+void combsort(node*& H)
+{
+	int siz = size(H), gap = 0;
+    node *n = H;
+	node *ostatni;
+    while (n)
+	n = n->next;
+    ostatni = n;
+    if (siz < 3)
+    {
+        bubblesort(H);
+        return;
+    }
+    gap = siz;
+    while (true)
+    {
+        gap = gap / 1.3;
+        if (gap == 1) break;
+        node *p = H;
+		node *q = NULL;
+        for (int i = 0; i < gap - 1; i++)
+        {
+            p = p->next;
+        }
+        if (H->val > p->next->val)
+        {
+            swapgap(H, q, p);
+        }
+        p = p->next;
+        if (p == ostatni)
+        {
+            break;
+        }
+        q = H;
+        for (; p->next != NULL; q = q->next, p = p->next)
+        {
+            if (q->next->val > p->next->val)
+            {
+                swapgap(H, q, p);
+            }
+        }
+    }
+    bubblesort(H);
+    return;  	
+}

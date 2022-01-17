@@ -1,0 +1,71 @@
+#include <iostream>
+using namespace std;
+///////////////////////////
+/////// STOS TABLICOWO ////
+//////////////////////////
+struct stack
+{
+   int n; ///rozmiar tablicy
+   int sptr; ///wskaznik na t[top+1]
+   int *tab; ///tablica elementow na stosie
+   bool empty(void);
+   bool full(void);
+   int top(void);
+   void push(int v);
+   void pop(void);
+   stack(int x); ///konstruktor
+   ~stack(); ///destruktor
+};
+stack::stack(int x)
+{
+    n=x;
+    sptr=0;
+    tab=new int[x];
+}
+stack::~stack()
+{
+    delete []tab;
+}
+bool stack::empty(void)
+{
+    if(sptr==0)   return true;
+    else return false;
+}
+bool stack::full(void)
+{
+    if(sptr==n) return true;
+    else return false;
+}
+void stack::push(int v)
+{
+    if(!full())
+    {
+        tab[sptr++]=v;
+    }
+}
+void stack::pop(void)
+{
+    if(!empty())
+    {
+        sptr--;
+    }
+}
+int stack::top(void)
+{
+    if (sptr) return tab[sptr-1];
+    else
+    return 0;
+}
+
+int main()
+{
+    stack stos(10);
+
+    for(int i=1; i<=10; i++) stos.push(i);
+    while (!stos.empty())
+    {
+        cout<<stos.top()<<" ";
+        stos.pop();
+    }
+    cout<<endl<<stos.top();
+}

@@ -1,0 +1,77 @@
+#include <iostream>
+#include <iomanip>
+using namespace std;
+//////////////////////////
+///// LISTA SASIEDZTWA ///
+/////////////////////////
+int n;
+node**tab;
+bool*visited;
+struct node
+{
+  int data;
+  node*next;  
+};
+void DFS(int v)
+{
+    node*p;
+    visited[v]=true;
+    cout<<v;
+    for(p=tab[v];p;p=p->next)
+    {
+        if(!visited[p->data]) DFS(p->data);
+    }
+}
+void BFS(int v)
+{
+    node*q, *p,*head,*tail;
+    q=new node;
+    q->data=v;
+    q->next=NULL;
+    head=tail=q;
+    
+    visited[v]=true;
+    
+    while(head)
+    {
+        v=head->data;
+        head=head->next;
+        if(!head) tail=NULL;
+        delete q;
+        cout<<v;
+        
+        for(p=tab[v]; p; p=p->next)
+        {
+            if(!visited(p->data))
+            {
+                q=new node;
+                q->data=p->data;
+                q->next=NULL;
+                if(!tail) head=q;
+                else tail->next=q;
+                tail=q;
+                visited(p->data)=true;
+            }
+        }
+    }
+}
+int main()
+{
+    int m,i,v1,v2;
+    node*p;
+    cin>>n>>m;
+    tab=new node*[n];
+    for(i=0; i<n; i++)
+    {
+        tab[i]=NULL;
+    }
+    
+    for(i=0; i<m; i++)
+    {
+        cin>>v1>>v2;
+        p=new node;
+        p->data=v2;
+        p->next=tab[v1];
+        tab[v1]=p;
+    }
+}

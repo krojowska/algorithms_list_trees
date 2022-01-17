@@ -1,0 +1,351 @@
+#include <iostream>
+using namespace std;
+//////////////////////////////////
+/////// DRZEWA BST ///////////////
+/////////////////////////////////
+string cr,cl,cp;
+
+struct bstnode
+{
+  bstnode *up;
+  bstnode *left;
+  bstnode *right;
+  int key;
+};
+struct queue
+{
+  int qptr; ///poczatek
+  int count; ///ilosc elementow
+  bstnode **tab; ///tablica
+  int n; ///rozmiar tablicy
+  queue(int x); ///konstruktor
+  ~queue(); ///destruktor
+  void pop(void);
+  void push(bstnode* v);
+  bool empty(void);
+  bstnode *front(void);
+};
+queue::queue(int x)
+{
+    n=x;
+    qptr=count=0;
+    tab=new bstnode*[x];
+}
+queue::~queue()
+{
+    delete [] tab;
+}
+bool queue::empty()
+{
+    if(count) return false;
+    return true;
+}
+void queue::pop()
+{
+    if(!empty())
+    {
+        count--;
+        qptr++;
+        if(qptr==n)
+        qptr=0;
+    }
+}
+void queue::push(bstnode *v)
+{
+    int index;
+    if(count<n)
+    {
+        index=qptr+count++;
+        if(index>=n) index-=n;
+    }
+    tab[index]=v;
+}
+bstnode *queue::front()
+{
+    if(count)
+    return tab[qptr];
+    return NULL;
+}
+void print(string sp, string sn, bstnode * v)
+{
+  string s;
+
+  if(v)
+  {
+    s = sp;
+    if(sn == cr) s[s.length() - 2] = ' ';
+    print(s + cp, cr, v->right);
+
+    s = s.substr(0,sp.length()-2);
+    cout << s << sn << v->key << endl;
+
+    s = sp;
+    if(sn == cl) s[s.length() - 2] = ' ';
+    print(s + cp, cl, v->left);
+  }
+}
+void add (bstnode *&root, int v)
+{
+    bstnode *a=new bstnode;
+    a->key=v;
+    a->left=a->right=NULL; ///zerujemy synow nowego wezla
+    bstnode*p=root;
+    if(!p) root=a;
+    else
+    {
+        while(true)
+        {
+            if(p->key>v)
+            {
+                if(!p->left)
+                {
+                    p->left=a;
+                     break;
+                }
+                else p=p->left;
+            }
+
+            else 
+            {
+                if(!p->right)
+                {
+                    p->right=a;
+                    break;
+                }
+                else p=p->right;
+            }
+        }
+    }
+	a->up=p;
+}
+void preorder(bstnode *v) ///wzdluz
+{
+    if(v)
+    {
+        cout<<v->key<<" ";
+        preorder(v->left);
+        preorder(v->right);
+    }
+}
+void inorder(bstnode *v) ///poprzecznie
+{
+    if(v)
+    {
+        inorder(v->left);
+        cout<<v->key<<" ";
+        inorder(v->right);
+    }
+}
+void postorder(bstnode*v) ///wstecznie
+{
+    if(v)
+    {
+        postorder(v->left);
+        postorder(v->right);
+        cout<<v->key<<" ";
+    }
+}
+void bfs(bstnode*&root)///wszerz
+{
+    bstnode *v=root;
+    queue kolejka(16);
+    bstnode *a;
+    kolejka.push(v);
+    while(!kolejka.empty())
+    {
+        a=kolejka.front();
+        kolejka.pop();
+        cout<<a->key<<" ";
+        if(a->left) kolejka.push(a->left);
+        if(a->right) kolejka.push(a->right);
+    }
+}
+bstnode *min(bstnode*root)
+{
+    bstnode *p=root;
+    if(p)
+    while(p->left) p=p->left;
+    return p;
+}
+bstnode *max(bstnode*root)
+{
+    bstnode*p=root;
+    if(p)
+    while(p->right) p=p->right;
+    return p;
+}
+bstnode *nastepnik(bstnode*p)
+{
+    if(p)
+    {
+        bstnode*r;
+        if(p->right) return min(p->right);
+        else
+        {
+            r=p->up;
+            while(r && p==r->right)
+            {
+                p=r;
+                r=r->up;
+            }
+            return r;
+        }
+    }
+    return p;
+}
+bstnode *poprzednik(bstnode*p)
+{
+    if(p)
+    {
+        bstnode*r;
+        if(p->left) return max(p->left);
+        else
+        {
+            r=p->up;
+            while(r && p==r->left)
+            {
+                p=r;
+                r=r->up;
+            }
+            return r;
+        }
+    }
+    return p;
+}
+void remove(bstnode *&root, bstnode *X)
+{
+    bstnode *Y,*Z;
+    if(X)
+    {
+        Y= (!X->left || !X->right)? X : nastepnik(X);
+        Z= (Y->left)? Y->left : Y->right;
+
+        if(Z) Z->up=Y->up;
+
+        if(!Y->up) root=Z;
+        else if(Y==Y->up->left) Y->up->left=Z;
+        else Y->up->right=Z;
+
+        if(Y!=X) X->key=Y->key;
+
+        delete Y;
+    }
+}
+void leavesDelete(bstnode*&p) //USUWANIE LISCI
+{
+    if(p)
+    {
+        if(p->left==NULL && p->right==NULL)
+        {
+            delete p;
+            p=NULL;
+        }
+        else
+        {
+            if(p->left)
+            leavesDelete(p->left);
+            if(p->right)
+            leavesDelete(p->right);
+        }
+    }
+}
+void UsunPoddrzewo(bstnode *&v)
+{
+    if(v)
+    {
+    UsunPoddrzewo(v->left);
+    UsunPoddrzewo(v->right);
+    bstnode *p;
+    p=v->up;
+    if(p->left==v) p->left=NULL;
+    else p->right=NULL;
+
+    delete v;
+    }
+}
+void rotRight(bstnode*root, bstnode *A)
+{
+    bstnode *B=A->left;
+    bstnode*p = A->up;
+    if(B)
+    {
+        A->left=B->right;
+        if(A->left) A->left->up=A;
+
+        B->right=A;
+        A->up=B;
+        B->up=p;
+    }
+    if(p)
+    {
+        if(p->left==A) p->left=B;
+        else p->right=B;
+
+    }
+    else root=B;
+}
+void rotLeft(bstnode*root, bstnode*A)
+{
+    bstnode*B=A->right;
+    bstnode*p=A->up;
+    if(B)
+    {
+        A->right=B->left;
+        if(A->right) A->right->up=A;
+        B->left=A;
+        A->up=B;
+        B->up=p;
+    }
+    if(p)
+    {
+        if(p->left==A) p->left=B;
+        else p->right=B;
+    }
+    else root=B;
+}
+int main()
+{
+    bstnode *root=NULL; ///korzen
+
+    cr = cl = cp = "  ";
+    cr[0] = 218; cr[1] = 196;
+    cl[0] = 192; cl[1] = 196;
+    cp[0] = 179;
+
+    add(root,10);
+    add(root,7);
+    add(root,15);
+    add(root,3);
+    add(root,9);
+    add(root,13);
+    add(root,17);
+    add(root,1);
+    add(root,4);
+    add(root,8);
+    add(root,11);
+    print("","",root);
+    cout<<"preorder: ";
+    preorder(root);///wzdluz
+    cout<<endl<<"inorder: ";
+    inorder(root);///poprzecznie
+    cout<<endl<<"postorder: ";
+    postorder(root); ///wstecz
+    cout<<endl<<"bfs: ";
+    bfs(root); ///wszerz
+    cout<<endl;
+    bstnode *n,*p;
+    n=nastepnik(root);
+    p=poprzednik(root);
+    cout<<"Nastepnik roota: "<<n->key;
+    cout<<endl<<"Poprzednik roota: "<<p->key<<endl;
+    bstnode *mi,*ma;
+    mi=min(root);
+    ma=max(root);
+    cout<<"Minimum: "<<mi->key<<endl;
+    cout<<"Maximum: "<<ma->key<<endl;
+    bstnode*a=root->left;
+    remove (root,a);
+    print("","",root);
+    UsunPoddrzewo(root->left);
+    print("","",root);
+}

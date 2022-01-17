@@ -1,0 +1,364 @@
+#include <iostream>
+#include <ctime>
+#include <cmath>
+#include <cstdlib>
+#include <iomanip>
+////////////////////////////
+///ZAL2///////////////////////////////////
+znajdz w kazdej z list element najblizszy sredniej i przenies je do nowej listy.
+polowe listy obroc a druga polowe przenies dodrzewa bst. dodatkowo funkcja usuwajaca liœcie
+//////////////////////////////////////////////////////////////////////
+using namespace std;
+///////////////////////
+string cr,cl,cp;      // ³añcuchy do znaków ramek do BSTprint (z eduinf- tylko do wyswietlania, NIE CZA SIE UCZYC XD )
+//////////////////////
+struct node
+{
+  node *next;
+  int data;
+};
+struct BSTnode
+{
+  int key;
+  BSTnode *right;
+  BSTnode *left;
+  BSTnode *up;
+};
+void add_front(node *&head, int v)
+{
+    node *p=new node;
+    p->data=v;
+    p->next=head;
+    head=p;
+}
+void add_back(node *&head, int v)
+{
+    node *p=head;
+    node *e=new node;
+    e->data=v;
+    e->next=NULL;
+    if (p)
+    {
+        while (p->next) p=p->next;
+        p->next=e;
+    }
+    else head=e;
+}
+void del_front(node *&head)
+{
+    node*p=head;
+    node *e=head->next;
+    head=e;
+    delete p;
+}
+void show(node *&head)
+{
+    node *p=head;
+    while(p)
+    {
+        cout<<p->data<<" ";
+        p=p->next;
+    }
+}
+double calc(node*&head)
+{
+    double ile=0;
+    node *p=head;
+    while (p)
+    {
+        ile++;
+        p=p->next;
+    }
+    return ile;
+}
+double srednia(node *&head)
+{
+    node *p=head;
+    double ilosc=calc(head);
+    double suma=0;
+    while(p)
+    {
+        suma+=(p->data);
+        p=p->next;
+    }
+    double sr=suma/ilosc;
+    return sr;
+}
+int minimum(node *&head)
+{
+    node*p=head;
+    double sr=srednia(head);
+    double min=abs((p->data)-sr);
+    int liczba=p->data;
+    p=p->next;
+    while(p)
+    {
+        if(abs((p->data)-sr)<min)
+        {
+            min=abs((p->data)-sr);
+            liczba=p->data;
+        }
+        p=p->next;
+    }
+    return liczba;
+}
+void split(node *&head, node *&h1, node *&h2) // podzial na 2 listy
+{
+    int ilosc=calc(head);
+    node *p1, *p2;
+    add_front(h1,0);
+    add_front(h2,0);
+    p1=h1;
+    p2=h2;
+    while(head)
+    {
+        for (int i=0; i<(ilosc/2); i++)
+        {
+            p1->next=head;
+            p1=p1->next;
+            head=head->next;
+        }
+        for (int i=(ilosc/2); i<ilosc; i++)
+        {
+            p2->next=head;
+            p2=p2->next;
+            head=head->next;
+        }
+    }
+    p1->next=p2->next=NULL;
+    //del_front(h1);
+    //del_front(h2);
+}
+
+void reverse (node *&head) // odwrocenie listy
+{
+    node  *prev, *curr, *next;
+    prev=curr=next=NULL;
+    curr=head;
+    while(curr!=NULL)
+    {
+        next=curr->next;
+        curr->next=prev;
+        prev=curr;
+        curr=next;
+    }
+    head=prev;
+}
+void BSTinsert(BSTnode *&root, int v)
+{
+    BSTnode *a, *b;
+    a=new BSTnode;
+    a->left=a->right=NULL;
+    a->key=v;
+    b=root;
+    if (!b) root=a;
+    else
+    {
+        while(true)
+        {
+            if(v < b->key)
+            {
+                if(!b->left)
+                {
+                    b->left=a;
+                    break;
+                }
+                else b=b->left;
+            }
+            else
+            {
+                if(!b->right)
+                {
+                    b->right=a;
+                    break;
+                }
+                else b=b->right;
+            }
+        }
+    }
+    a->up=b;
+}
+BSTnode *BSTfind(BSTnode*p, int v)
+{
+    while(p &&p->key!=v)
+    {
+        p= (v < p->key) ? (p->left) : (p->right);
+    }
+    return p;
+}
+
+BSTnode *BSTmin(BSTnode *p)
+{
+    if(p)
+    {
+        while(p->left)
+        p=p->left;
+    }
+    return p;
+}
+BSTnode *BSTmax(BSTnode *p)
+{
+    if(p)
+    {
+        while(p->right)
+        p=p->right;
+    }
+    return p;
+}
+BSTnode *BSTnastepnik(BSTnode *p)
+{
+    BSTnode *r;
+    if(p)
+    {
+    if(p->right) BSTmin(p->right);
+    else
+    {
+        r=p->up;
+        while(r &&(p==r->right))
+        {
+            p=r;
+            r=p->up;
+        }
+        return r;
+    }
+    }
+    return p;
+}
+BSTnode *BSTpoprzednik(BSTnode*p)
+{
+    BSTnode *r;
+    if(p)
+    {
+        if(p->left) BSTmax(p->left);
+        else
+        {
+            r=p->up;
+            while(r &&(p==r->left))
+            {
+                p=r;
+                r=p->up;
+            }
+            return r;
+        }
+    }
+    return p;
+}
+void BSTremove(BSTnode *&root, BSTnode *x) // usuwanie wez³a
+{
+    BSTnode *y, *z;
+    if(x)
+    {
+        y= (!x->left || !x->right) ? x : BSTnastepnik(x);
+        z= (y->left) ? y->left : y->right;
+
+        if(z)   z->up=y->up;
+
+        if(!y->up)  root=z;
+        else if(y==y->up->left) y->up->left=z;
+        else y->up->right=z;
+
+        if(y!=x) x->key=y->key;
+        delete y;
+    }
+}
+void BSTprint(string sp, string sn, BSTnode * v) /// dziwna funkcja z eduinf (NIE CZA SIE UCZYC)
+{
+  string s;
+
+  if(v)
+  {
+    s = sp;
+    if(sn == cr) s[s.length() - 2] = ' ';
+    BSTprint(s + cp, cr, v->right);
+
+    s = s.substr(0,sp.length()-2);
+    cout << s << sn << v->key << endl;
+
+    s = sp;
+    if(sn == cl) s[s.length() - 2] = ' ';
+    BSTprint(s + cp, cl, v->left);
+  }
+}
+int main()
+{
+    BSTnode *root=NULL;
+    node *H=NULL;
+    node *H1,*H2;
+    H1=H2=NULL;
+    node **DB=new node*[10];
+    for (int i=0; i<10; i++)
+    {
+        DB[i]=new node[4];
+    }
+    for (int i=0; i<10; i++)
+    {
+        for(int j=0; j<4; j++)
+        {
+            DB[i]=NULL;
+        }
+    }
+    for (int i=0; i<10; i++)
+    {
+        for (int j=0; j<4; j++)
+        {
+            add_front(*&DB[i], rand()%10);
+        }
+    }
+    for (int i=0; i<10; i++)
+    {
+        show(*&DB[i]);
+        cout<<endl;
+    }
+    ////////////////////////////////////////////////////////////////////////////////////////
+    cout<<endl<<"Srednia kazdej z list to: "<<endl;
+    for (int i=0; i<10; i++)
+    {
+        cout<<srednia(*&DB[i]);
+        cout<<endl;
+    }
+    /////////////////////////////////////////////////////////////////////////////////////////////
+    cout<<endl<<"Minimalna wartosc kazdej z list to: "<<endl;
+    for (int i=0; i<10; i++)
+    {
+        cout<<minimum(*&DB[i]);
+        cout<<endl;
+    }
+    ////////////////////////////////////////////////////////////////////////////////////////////
+    cout<<endl<<"Nowa lista: "<<endl;
+    for (int i=0; i<10; i++)
+    {
+        add_back(*&H, minimum(*&DB[i]));
+    }
+
+        show(*&H);
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+        split(*&H, *&H1, *&H2);
+        cout<<endl<<endl<<"Po podziale:"<<endl<<"H1: ";
+        del_front(*&H1);
+        show(*&H1);
+        cout<<endl<<"H2: ";
+        del_front(*&H2);
+        show(*&H2);
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        cout<<endl<<endl<<"H1 reverse: ";
+        reverse(*&H1);
+        show(*&H1);
+        //////////////////////////////////////////////////////////////////////////////////////////////
+  cr = cl = cp = "  ";      ////// do funkcji BSTprint (dziwne z eduinf)
+  cr[0] = 218; cr[1] = 196;
+  cl[0] = 192; cl[1] = 196;
+  cp[0] = 179;
+        ///////////////////////////
+        cout<<endl<<endl<<"Dodajemy liste H2 do drzewa BST. "<<endl;
+        while(H2)
+        {
+            BSTinsert(*&root, (H2->data));
+            H2=H2->next;
+        }
+        BSTprint("","",root);
+        cout<<endl<<"Usuwamy wezel: "<<endl;
+        BSTremove(root, (root->left));
+        cout<<endl;
+        BSTprint("","",root);
+}
